@@ -48,6 +48,28 @@ module.exports = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      animation: {
+        'fade-in': 'fade-in 0.4s ease-out',
+        'slide-up': 'slide-up 0.5s ease-out',
+        'shimmer': 'shimmer 1.5s ease-in-out infinite',
+        'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
+        'gradient-shift': 'gradient-shift 8s ease infinite',
+        'spin-slow': 'spin-slow 3s linear infinite',
+      },
+      boxShadow: {
+        'glow-sm': '0 0 10px -3px rgba(99, 102, 241, 0.3)',
+        'glow': '0 0 20px -5px rgba(99, 102, 241, 0.3)',
+        'glow-lg': '0 0 30px -5px rgba(99, 102, 241, 0.4)',
+        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
+        'card-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],

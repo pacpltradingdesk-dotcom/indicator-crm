@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ArrowLeft, Phone, Mail, Calendar, MessageSquare, CreditCard, Brain, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, Phone, Mail, Calendar, MessageSquare, CreditCard, Brain, Save, Trash2, TrendingUp } from 'lucide-react'
 import { formatPhone, formatCurrency, formatDateTime, getTemperatureColor, getStageColor, timeAgo } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
@@ -83,18 +83,26 @@ export default function CustomerDetailPage() {
     setAnalyzing(false)
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>
-  if (!customer) return <div className="text-center py-8 text-gray-500">Customer not found</div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse-soft shadow-glow">
+          <TrendingUp className="h-5 w-5 text-white" />
+        </div>
+      </div>
+    )
+  }
+  if (!customer) return <div className="text-center py-8 text-muted-foreground">Customer not found</div>
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push('/customers')}>
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">{customer.name || 'Unknown'}</h1>
-          <p className="text-gray-500 font-mono">{formatPhone(customer.phone)}</p>
+          <p className="text-muted-foreground font-mono">{formatPhone(customer.phone)}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleAiAnalyze} disabled={analyzing}>
@@ -114,26 +122,26 @@ export default function CustomerDetailPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card><CardContent className="p-3 text-center">
-          <p className="text-xs text-gray-500">Score</p>
-          <p className="text-2xl font-bold">{customer.leadScore}<span className="text-sm text-gray-400">/100</span></p>
-        </CardContent></Card>
-        <Card><CardContent className="p-3 text-center">
-          <p className="text-xs text-gray-500">Stage</p>
+        <div className="stat-gradient-indigo rounded-xl p-3 text-white text-center card-hover">
+          <p className="text-xs text-white/80">Score</p>
+          <p className="text-2xl font-bold">{customer.leadScore}<span className="text-sm text-white/60">/100</span></p>
+        </div>
+        <Card className="card-hover"><CardContent className="p-3 text-center">
+          <p className="text-xs text-muted-foreground">Stage</p>
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStageColor(customer.leadStage)}`}>{customer.leadStage}</span>
         </CardContent></Card>
-        <Card><CardContent className="p-3 text-center">
-          <p className="text-xs text-gray-500">Temperature</p>
+        <Card className="card-hover"><CardContent className="p-3 text-center">
+          <p className="text-xs text-muted-foreground">Temperature</p>
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getTemperatureColor(customer.leadTemperature)}`}>{customer.leadTemperature}</span>
         </CardContent></Card>
-        <Card><CardContent className="p-3 text-center">
-          <p className="text-xs text-gray-500">Messages</p>
+        <div className="stat-gradient-blue rounded-xl p-3 text-white text-center card-hover">
+          <p className="text-xs text-white/80">Messages</p>
           <p className="text-2xl font-bold">{customer.totalMessages}</p>
-        </CardContent></Card>
-        <Card><CardContent className="p-3 text-center">
-          <p className="text-xs text-gray-500">Spent</p>
+        </div>
+        <div className="stat-gradient-green rounded-xl p-3 text-white text-center card-hover">
+          <p className="text-xs text-white/80">Spent</p>
           <p className="text-2xl font-bold">{formatCurrency(customer.totalSpent)}</p>
-        </CardContent></Card>
+        </div>
       </div>
 
       <Tabs defaultValue="profile">
@@ -146,7 +154,7 @@ export default function CustomerDetailPage() {
         </TabsList>
 
         <TabsContent value="profile">
-          <Card>
+          <Card className="card-hover">
             <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -209,7 +217,7 @@ export default function CustomerDetailPage() {
                 {editing ? (
                   <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
                 ) : (
-                  <p className="text-gray-600">{customer.notes || 'No notes'}</p>
+                  <p className="text-muted-foreground">{customer.notes || 'No notes'}</p>
                 )}
               </div>
               <div>
@@ -220,7 +228,7 @@ export default function CustomerDetailPage() {
                       {ct.tag.name} {ct.aiConfidence && <span className="ml-1 opacity-50">{Math.round(ct.aiConfidence * 100)}%</span>}
                     </Badge>
                   ))}
-                  {(!customer.tags || customer.tags.length === 0) && <span className="text-gray-400 text-sm">No tags</span>}
+                  {(!customer.tags || customer.tags.length === 0) && <span className="text-muted-foreground text-sm">No tags</span>}
                 </div>
               </div>
             </CardContent>
@@ -228,20 +236,20 @@ export default function CustomerDetailPage() {
         </TabsContent>
 
         <TabsContent value="timeline">
-          <Card>
+          <Card className="card-hover">
             <CardContent className="p-6">
               <div className="space-y-4">
                 {customer.activities?.map((a: any) => (
                   <div key={a.id} className="flex gap-3 text-sm">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
                     <div>
                       <p>{a.description}</p>
-                      <p className="text-xs text-gray-500">{formatDateTime(a.createdAt)}</p>
+                      <p className="text-xs text-muted-foreground">{formatDateTime(a.createdAt)}</p>
                     </div>
                   </div>
                 ))}
                 {(!customer.activities || customer.activities.length === 0) && (
-                  <p className="text-gray-500">No activity yet</p>
+                  <p className="text-muted-foreground">No activity yet</p>
                 )}
               </div>
             </CardContent>
@@ -249,23 +257,23 @@ export default function CustomerDetailPage() {
         </TabsContent>
 
         <TabsContent value="messages">
-          <Card>
+          <Card className="card-hover">
             <CardContent className="p-6">
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
                 {customer.messages?.map((m: any) => (
                   <div key={m.id} className={`flex ${m.direction === 'OUTBOUND' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[70%] rounded-lg px-3 py-2 text-sm ${
-                      m.direction === 'OUTBOUND' ? 'bg-primary text-primary-foreground' : 'bg-gray-100'
+                    <div className={`max-w-[70%] rounded-2xl px-4 py-2.5 text-sm ${
+                      m.direction === 'OUTBOUND' ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white' : 'bg-muted'
                     }`}>
                       <p>{m.content}</p>
-                      <p className={`text-xs mt-1 ${m.direction === 'OUTBOUND' ? 'text-primary-foreground/70' : 'text-gray-500'}`}>
+                      <p className={`text-xs mt-1 ${m.direction === 'OUTBOUND' ? 'text-white/70' : 'text-muted-foreground'}`}>
                         {formatDateTime(m.createdAt)} {m.status && `· ${m.status}`}
                       </p>
                     </div>
                   </div>
                 ))}
                 {(!customer.messages || customer.messages.length === 0) && (
-                  <p className="text-gray-500 text-center">No messages yet</p>
+                  <p className="text-muted-foreground text-center">No messages yet</p>
                 )}
               </div>
             </CardContent>
@@ -273,14 +281,14 @@ export default function CustomerDetailPage() {
         </TabsContent>
 
         <TabsContent value="payments">
-          <Card>
+          <Card className="card-hover">
             <CardContent className="p-6">
               <div className="space-y-3">
                 {customer.payments?.map((p: any) => (
-                  <div key={p.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={p.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-accent/50 transition-colors">
                     <div>
                       <p className="font-medium">{p.product?.name || p.description || 'Payment'}</p>
-                      <p className="text-sm text-gray-500">{p.razorpayPaymentId} · {p.method}</p>
+                      <p className="text-sm text-muted-foreground">{p.razorpayPaymentId} · {p.method}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold">{formatCurrency(p.amount)}</p>
@@ -289,7 +297,7 @@ export default function CustomerDetailPage() {
                   </div>
                 ))}
                 {(!customer.payments || customer.payments.length === 0) && (
-                  <p className="text-gray-500 text-center">No payments yet</p>
+                  <p className="text-muted-foreground text-center">No payments yet</p>
                 )}
               </div>
             </CardContent>
@@ -297,13 +305,13 @@ export default function CustomerDetailPage() {
         </TabsContent>
 
         <TabsContent value="ai">
-          <Card>
+          <Card className="card-hover">
             <CardContent className="p-6 space-y-4">
               {customer.aiSummary ? (
                 <>
                   <div>
                     <label className="text-sm font-medium">AI Summary</label>
-                    <p className="mt-1 text-gray-700">{customer.aiSummary}</p>
+                    <p className="mt-1 text-foreground">{customer.aiSummary}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -330,8 +338,8 @@ export default function CustomerDetailPage() {
                 </>
               ) : (
                 <div className="text-center py-8">
-                  <Brain className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                  <p className="text-gray-500">No AI analysis yet</p>
+                  <Brain className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-muted-foreground">No AI analysis yet</p>
                   <Button className="mt-3" onClick={handleAiAnalyze} disabled={analyzing}>
                     {analyzing ? 'Analyzing...' : 'Run AI Analysis'}
                   </Button>

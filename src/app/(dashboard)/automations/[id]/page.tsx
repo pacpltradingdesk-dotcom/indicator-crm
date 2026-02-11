@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
-import { ArrowLeft, Zap, CheckCircle2, XCircle, Clock, Play } from 'lucide-react'
+import { ArrowLeft, Zap, CheckCircle2, XCircle, Clock, Play, TrendingUp } from 'lucide-react'
 import { formatDateTime } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
@@ -36,82 +36,84 @@ export default function AutomationDetailPage() {
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>
-  if (!automation) return <div className="text-center py-8 text-gray-500">Automation not found</div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse-soft shadow-glow">
+          <TrendingUp className="h-5 w-5 text-white" />
+        </div>
+      </div>
+    )
+  }
+  if (!automation) return <div className="text-center py-8 text-muted-foreground">Automation not found</div>
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push('/automations')}>
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Zap className={`h-5 w-5 ${automation.isActive ? 'text-yellow-500' : 'text-gray-400'}`} />
+            <Zap className={`h-5 w-5 ${automation.isActive ? 'text-yellow-500' : 'text-muted-foreground'}`} />
             {automation.name}
           </h1>
-          {automation.description && <p className="text-gray-500 text-sm">{automation.description}</p>}
+          {automation.description && <p className="text-muted-foreground text-sm">{automation.description}</p>}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">{automation.isActive ? 'Active' : 'Inactive'}</span>
+          <span className="text-sm text-muted-foreground">{automation.isActive ? 'Active' : 'Inactive'}</span>
           <Switch checked={automation.isActive} onCheckedChange={toggleActive} />
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-500">Trigger</p>
-            <Badge className="mt-1">{automation.trigger}</Badge>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-500">Steps</p>
-            <p className="text-2xl font-bold">{automation.steps?.length || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-500">Total Runs</p>
-            <p className="text-2xl font-bold">{automation.runs?.length || 0}</p>
-          </CardContent>
-        </Card>
+        <div className="stat-gradient-indigo rounded-xl p-4 text-white card-hover">
+          <p className="text-xs text-white/80">Trigger</p>
+          <Badge className="mt-1 bg-white/20 text-white border-0">{automation.trigger}</Badge>
+        </div>
+        <div className="stat-gradient-purple rounded-xl p-4 text-white card-hover">
+          <p className="text-xs text-white/80">Steps</p>
+          <p className="text-2xl font-bold">{automation.steps?.length || 0}</p>
+        </div>
+        <div className="stat-gradient-blue rounded-xl p-4 text-white card-hover">
+          <p className="text-xs text-white/80">Total Runs</p>
+          <p className="text-2xl font-bold">{automation.runs?.length || 0}</p>
+        </div>
       </div>
 
       {/* Workflow Steps */}
-      <Card>
+      <Card className="card-hover">
         <CardHeader><CardTitle className="text-sm font-medium">Workflow Steps</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-3">
             {automation.steps?.map((step: any, i: number) => (
               <div key={step.id} className="flex items-start gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-sm font-medium text-indigo-600 dark:text-indigo-400">
                     {i + 1}
                   </div>
-                  {i < automation.steps.length - 1 && <div className="w-0.5 h-8 bg-gray-200 mt-1" />}
+                  {i < automation.steps.length - 1 && <div className="w-0.5 h-8 bg-border mt-1" />}
                 </div>
-                <div className="flex-1 border rounded-lg p-3">
+                <div className="flex-1 border border-border/50 rounded-lg p-3">
                   <p className="font-medium text-sm">{step.type.replace(/_/g, ' ')}</p>
-                  <pre className="text-xs text-gray-500 mt-1 whitespace-pre-wrap">{JSON.stringify(step.config, null, 2)}</pre>
+                  <pre className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{JSON.stringify(step.config, null, 2)}</pre>
                 </div>
               </div>
             ))}
             {(!automation.steps || automation.steps.length === 0) && (
-              <p className="text-gray-500 text-sm">No steps configured</p>
+              <p className="text-muted-foreground text-sm">No steps configured</p>
             )}
           </div>
         </CardContent>
       </Card>
 
       {/* Run History */}
-      <Card>
+      <Card className="card-hover">
         <CardHeader><CardTitle className="text-sm font-medium">Run History</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-3">
             {automation.runs?.map((run: any) => (
-              <div key={run.id} className="flex items-center gap-3 p-3 border rounded-lg">
+              <div key={run.id} className="flex items-center gap-3 p-3 border border-border/50 rounded-lg hover:bg-accent/30 transition-colors">
                 {run.status === 'COMPLETED' ? (
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                 ) : run.status === 'FAILED' ? (
@@ -123,7 +125,7 @@ export default function AutomationDetailPage() {
                 )}
                 <div className="flex-1">
                   <p className="text-sm font-medium">{run.customer?.name || run.customer?.phone || 'Unknown'}</p>
-                  <p className="text-xs text-gray-500">{formatDateTime(run.startedAt)}</p>
+                  <p className="text-xs text-muted-foreground">{formatDateTime(run.startedAt)}</p>
                 </div>
                 <Badge variant={
                   run.status === 'COMPLETED' ? 'default' :
@@ -133,7 +135,7 @@ export default function AutomationDetailPage() {
               </div>
             ))}
             {(!automation.runs || automation.runs.length === 0) && (
-              <p className="text-gray-500 text-sm text-center py-4">No runs yet</p>
+              <p className="text-muted-foreground text-sm text-center py-4">No runs yet</p>
             )}
           </div>
         </CardContent>
