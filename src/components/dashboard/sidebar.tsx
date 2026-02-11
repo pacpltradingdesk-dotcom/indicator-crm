@@ -40,11 +40,14 @@ export function Sidebar() {
 
   const sidebarContent = (
     <>
-      <div className="p-4 border-b border-border">
+      {/* Brand Header */}
+      <div className="p-4 border-b border-border/50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">Indicator CRM</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-glow-sm">
+              <TrendingUp className="h-4.5 w-4.5 text-white" />
+            </div>
+            <span className="font-bold text-lg gradient-text">Indicator CRM</span>
           </div>
           <button
             className="lg:hidden text-muted-foreground hover:text-foreground"
@@ -55,6 +58,7 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
@@ -64,29 +68,36 @@ export function Sidebar() {
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-foreground dark:from-indigo-500/20 dark:to-purple-500/20'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent hover:translate-x-0.5'
               )}
             >
-              <item.icon className="h-4 w-4" />
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-gradient-to-b from-indigo-500 to-purple-500" />
+              )}
+              <item.icon className={cn('h-4 w-4', isActive && 'text-indigo-500 dark:text-indigo-400')} />
               {item.label}
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-3 border-t border-border space-y-2">
+      {/* Bottom Section */}
+      <div className="p-3 border-t border-border/50 space-y-2">
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground w-full transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground w-full transition-all duration-200"
         >
-          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <div className="relative w-4 h-4">
+            <Sun className={cn('h-4 w-4 absolute transition-all duration-300', theme === 'dark' ? 'rotate-0 opacity-100' : 'rotate-90 opacity-0')} />
+            <Moon className={cn('h-4 w-4 absolute transition-all duration-300', theme === 'dark' ? '-rotate-90 opacity-0' : 'rotate-0 opacity-100')} />
+          </div>
           {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
         </button>
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-medium">
+        <div className="flex items-center gap-3 px-3 py-2.5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-medium ring-2 ring-indigo-500/20">
             {session?.user?.name?.[0] || 'A'}
           </div>
           <div className="flex-1 min-w-0">
@@ -95,7 +106,7 @@ export function Sidebar() {
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-destructive transition-colors"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -108,7 +119,7 @@ export function Sidebar() {
     <>
       {/* Mobile hamburger button */}
       <button
-        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-background border border-border shadow-sm"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border shadow-sm"
         onClick={() => setMobileOpen(true)}
       >
         <Menu className="h-5 w-5" />
@@ -117,7 +128,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-40"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -125,7 +136,7 @@ export function Sidebar() {
       {/* Mobile sidebar */}
       <div
         className={cn(
-          'lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-200',
+          'lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-card/95 backdrop-blur-xl border-r border-border/50 flex flex-col transition-transform duration-300',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
@@ -133,7 +144,7 @@ export function Sidebar() {
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col h-full">
+      <div className="hidden lg:flex w-64 bg-card border-r border-border/50 flex-col h-full shadow-sm">
         {sidebarContent}
       </div>
     </>

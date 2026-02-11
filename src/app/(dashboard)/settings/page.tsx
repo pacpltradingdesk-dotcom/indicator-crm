@@ -39,8 +39,11 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+    <div className="space-y-6 animate-fade-in">
+      <div>
+        <h1 className="text-2xl font-bold">Settings</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Configure integrations and manage products</p>
+      </div>
 
       <Tabs defaultValue="whatsapp">
         <TabsList>
@@ -54,7 +57,7 @@ export default function SettingsPage() {
 
         {/* WhatsApp Settings */}
         <TabsContent value="whatsapp">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <CardTitle>WhatsApp Business API</CardTitle>
               <CardDescription>Configure Meta WhatsApp Cloud API credentials</CardDescription>
@@ -64,9 +67,9 @@ export default function SettingsPage() {
               <SettingField label="Phone Number ID" setting="whatsapp_phone_number_id" settings={settings} setSettings={setSettings} onSave={saveSettings} />
               <SettingField label="Business Account ID" setting="whatsapp_business_account_id" settings={settings} setSettings={setSettings} onSave={saveSettings} />
               <SettingField label="Verify Token" setting="whatsapp_verify_token" settings={settings} setSettings={setSettings} onSave={saveSettings} />
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-border/50">
                 <p className="text-sm font-medium mb-1">Webhook URL</p>
-                <code className="text-xs bg-gray-100 p-2 rounded block">{typeof window !== 'undefined' ? window.location.origin : ''}/api/webhooks/whatsapp</code>
+                <code className="text-xs bg-muted p-2 rounded block">{typeof window !== 'undefined' ? window.location.origin : ''}/api/webhooks/whatsapp</code>
               </div>
             </CardContent>
           </Card>
@@ -74,7 +77,7 @@ export default function SettingsPage() {
 
         {/* Razorpay Settings */}
         <TabsContent value="razorpay">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <CardTitle>Razorpay</CardTitle>
               <CardDescription>Configure Razorpay webhook for automatic payment capture</CardDescription>
@@ -83,9 +86,9 @@ export default function SettingsPage() {
               <SettingField label="Key ID" setting="razorpay_key_id" settings={settings} setSettings={setSettings} onSave={saveSettings} />
               <SettingField label="Key Secret" setting="razorpay_key_secret" settings={settings} setSettings={setSettings} onSave={saveSettings} type="password" />
               <SettingField label="Webhook Secret" setting="razorpay_webhook_secret" settings={settings} setSettings={setSettings} onSave={saveSettings} type="password" />
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-border/50">
                 <p className="text-sm font-medium mb-1">Webhook URL</p>
-                <code className="text-xs bg-gray-100 p-2 rounded block">{typeof window !== 'undefined' ? window.location.origin : ''}/api/webhooks/razorpay</code>
+                <code className="text-xs bg-muted p-2 rounded block">{typeof window !== 'undefined' ? window.location.origin : ''}/api/webhooks/razorpay</code>
               </div>
             </CardContent>
           </Card>
@@ -93,7 +96,7 @@ export default function SettingsPage() {
 
         {/* OpenAI Settings */}
         <TabsContent value="openai">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <CardTitle>OpenAI</CardTitle>
               <CardDescription>Configure AI-powered lead scoring and analysis</CardDescription>
@@ -107,14 +110,14 @@ export default function SettingsPage() {
 
         {/* Products */}
         <TabsContent value="products">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Products</CardTitle>
                   <CardDescription>Pine Script indicators catalog</CardDescription>
                 </div>
-                <Button size="sm" onClick={() => setShowAddProduct(true)}>
+                <Button size="sm" onClick={() => setShowAddProduct(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
                   <Plus className="h-4 w-4 mr-1" /> Add Product
                 </Button>
               </div>
@@ -122,10 +125,10 @@ export default function SettingsPage() {
             <CardContent>
               <div className="space-y-3">
                 {products.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={p.id} className="flex items-center justify-between p-3 border border-border/50 rounded-lg hover:bg-accent/30 transition-colors">
                     <div>
                       <p className="font-medium">{p.name}</p>
-                      <p className="text-sm text-gray-500">{p.description || 'No description'}</p>
+                      <p className="text-sm text-muted-foreground">{p.description || 'No description'}</p>
                       {p.features && (typeof p.features === 'string' ? JSON.parse(p.features) : p.features).length > 0 && (
                         <div className="flex gap-1 mt-1">
                           {(typeof p.features === 'string' ? JSON.parse(p.features) : p.features).map((f: string) => <Badge key={f} variant="secondary" className="text-xs">{f}</Badge>)}
@@ -138,7 +141,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 ))}
-                {products.length === 0 && <p className="text-gray-500 text-center py-4">No products yet</p>}
+                {products.length === 0 && <p className="text-muted-foreground text-center py-4">No products yet</p>}
               </div>
             </CardContent>
           </Card>
@@ -147,14 +150,14 @@ export default function SettingsPage() {
 
         {/* Templates */}
         <TabsContent value="templates">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>WhatsApp Templates</CardTitle>
                   <CardDescription>Approved message templates for 24h+ conversations</CardDescription>
                 </div>
-                <Button size="sm" onClick={() => setShowAddTemplate(true)}>
+                <Button size="sm" onClick={() => setShowAddTemplate(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
                   <Plus className="h-4 w-4 mr-1" /> Add Template
                 </Button>
               </div>
@@ -162,7 +165,7 @@ export default function SettingsPage() {
             <CardContent>
               <div className="space-y-3">
                 {templates.map((t) => (
-                  <div key={t.id} className="p-3 border rounded-lg">
+                  <div key={t.id} className="p-3 border border-border/50 rounded-lg hover:bg-accent/30 transition-colors">
                     <div className="flex items-center justify-between mb-1">
                       <p className="font-medium">{t.name}</p>
                       <div className="flex gap-1">
@@ -171,10 +174,10 @@ export default function SettingsPage() {
                         <Badge variant={t.isApproved ? 'default' : 'secondary'}>{t.isApproved ? 'Approved' : 'Pending'}</Badge>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">{t.content}</p>
+                    <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">{t.content}</p>
                   </div>
                 ))}
-                {templates.length === 0 && <p className="text-gray-500 text-center py-4">No templates yet</p>}
+                {templates.length === 0 && <p className="text-muted-foreground text-center py-4">No templates yet</p>}
               </div>
             </CardContent>
           </Card>
@@ -183,7 +186,7 @@ export default function SettingsPage() {
 
         {/* Embed Code */}
         <TabsContent value="embed">
-          <Card>
+          <Card className="card-hover">
             <CardHeader>
               <CardTitle>Website Lead Capture</CardTitle>
               <CardDescription>Add this code snippet to your website to capture leads</CardDescription>

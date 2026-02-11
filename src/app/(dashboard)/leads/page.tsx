@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatPhone, getTemperatureColor, getStageColor, getInitials } from '@/lib/utils'
-import { Brain, Flame, Thermometer, Snowflake, Skull, GripVertical } from 'lucide-react'
+import { Brain, Flame, Thermometer, Snowflake, Skull, GripVertical, TrendingUp } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
@@ -26,6 +26,13 @@ import toast from 'react-hot-toast'
 
 const STAGES = ['NEW', 'ENGAGED', 'INTERESTED', 'NEGOTIATION', 'CONVERTED', 'CHURNED'] as const
 
+const TEMP_BORDER_COLORS: Record<string, string> = {
+  HOT: 'border-l-red-500',
+  WARM: 'border-l-orange-500',
+  COLD: 'border-l-blue-500',
+  DEAD: 'border-l-gray-400',
+}
+
 function DraggableLeadCard({ customer }: { customer: any }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: customer.id,
@@ -40,7 +47,7 @@ function DraggableLeadCard({ customer }: { customer: any }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-2 bg-card rounded border shadow-sm hover:shadow-md transition-shadow ${isDragging ? 'opacity-50' : ''}`}
+      className={`p-2.5 bg-card rounded-lg border shadow-sm card-hover border-l-2 ${TEMP_BORDER_COLORS[customer.leadTemperature] || 'border-l-gray-300'} ${isDragging ? 'opacity-50' : ''}`}
     >
       <div className="flex items-start gap-1">
         <button {...listeners} {...attributes} className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
@@ -49,9 +56,17 @@ function DraggableLeadCard({ customer }: { customer: any }) {
         <Link href={`/customers/${customer.id}`} className="flex-1 min-w-0">
           <p className="font-medium text-sm truncate">{customer.name || 'Unknown'}</p>
           <p className="text-xs text-muted-foreground">{formatPhone(customer.phone)}</p>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 mt-1.5">
             <span className={`px-1.5 py-0.5 rounded text-xs ${getTemperatureColor(customer.leadTemperature)}`}>{customer.leadTemperature}</span>
-            <span className="text-xs text-muted-foreground">Score: {customer.leadScore}</span>
+            <div className="flex items-center gap-1 flex-1">
+              <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${customer.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : customer.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+                  style={{ width: `${customer.leadScore}%` }}
+                />
+              </div>
+              <span className="text-xs text-muted-foreground">{customer.leadScore}</span>
+            </div>
           </div>
         </Link>
       </div>
@@ -67,7 +82,7 @@ function DroppableColumn({ stage, children }: { stage: string; children: React.R
       <div className={`px-3 py-2 rounded-t-lg text-sm font-medium ${getStageColor(stage)}`}>
         {stage}
       </div>
-      <div className={`bg-muted/50 rounded-b-lg p-2 space-y-2 min-h-[200px] transition-colors ${isOver ? 'bg-primary/10 ring-2 ring-primary/30' : ''}`}>
+      <div className={`bg-muted/30 rounded-b-lg p-2 space-y-2 min-h-[200px] transition-colors ${isOver ? 'bg-indigo-500/10 ring-2 ring-indigo-500/30' : ''}`}>
         {children}
       </div>
     </div>
@@ -134,7 +149,15 @@ export default function LeadsPage() {
     }
   }, [customers])
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse-soft shadow-glow">
+          <TrendingUp className="h-5 w-5 text-white" />
+        </div>
+      </div>
+    )
+  }
 
   const tempCounts = {
     HOT: customers.filter((c) => c.leadTemperature === 'HOT').length,
@@ -146,9 +169,12 @@ export default function LeadsPage() {
   const activeCustomer = activeId ? customers.find((c) => c.id === activeId) : null
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Leads</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Leads</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Track and manage your sales pipeline</p>
+        </div>
         <div className="flex gap-2">
           <Button variant={view === 'scoring' ? 'default' : 'outline'} size="sm" onClick={() => setView('scoring')}>Scoring</Button>
           <Button variant={view === 'kanban' ? 'default' : 'outline'} size="sm" onClick={() => setView('kanban')}>Kanban</Button>
@@ -157,55 +183,69 @@ export default function LeadsPage() {
 
       {/* Temperature Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-red-200">
-          <CardContent className="p-4 flex items-center gap-3">
-            <Flame className="h-5 w-5 text-red-500" />
-            <div>
-              <p className="text-xs text-muted-foreground">Hot</p>
-              <p className="text-2xl font-bold text-red-600">{tempCounts.HOT}</p>
+        <div className="stat-gradient-red rounded-xl p-4 text-white card-hover shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+              <Flame className="h-5 w-5" />
             </div>
-          </CardContent>
-        </Card>
-        <Card className="border-orange-200">
-          <CardContent className="p-4 flex items-center gap-3">
-            <Thermometer className="h-5 w-5 text-orange-500" />
             <div>
-              <p className="text-xs text-muted-foreground">Warm</p>
-              <p className="text-2xl font-bold text-orange-600">{tempCounts.WARM}</p>
+              <p className="text-xs text-white/80">Hot</p>
+              <p className="text-2xl font-bold">{tempCounts.HOT}</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-200">
-          <CardContent className="p-4 flex items-center gap-3">
-            <Snowflake className="h-5 w-5 text-blue-500" />
+          </div>
+        </div>
+        <div className="stat-gradient-orange rounded-xl p-4 text-white card-hover shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+              <Thermometer className="h-5 w-5" />
+            </div>
             <div>
-              <p className="text-xs text-muted-foreground">Cold</p>
-              <p className="text-2xl font-bold text-blue-600">{tempCounts.COLD}</p>
+              <p className="text-xs text-white/80">Warm</p>
+              <p className="text-2xl font-bold">{tempCounts.WARM}</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="border-gray-200 dark:border-gray-700">
-          <CardContent className="p-4 flex items-center gap-3">
-            <Skull className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </div>
+        <div className="stat-gradient-blue rounded-xl p-4 text-white card-hover shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+              <Snowflake className="h-5 w-5" />
+            </div>
             <div>
-              <p className="text-xs text-muted-foreground">Dead</p>
-              <p className="text-2xl font-bold text-muted-foreground">{tempCounts.DEAD}</p>
+              <p className="text-xs text-white/80">Cold</p>
+              <p className="text-2xl font-bold">{tempCounts.COLD}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700 rounded-xl p-4 text-white card-hover shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+              <Skull className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-white/80">Dead</p>
+              <p className="text-2xl font-bold">{tempCounts.DEAD}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Funnel Chart */}
-      <Card>
+      <Card className="card-hover">
         <CardHeader><CardTitle className="text-sm font-medium">Lead Funnel</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={funnel} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="stage" type="category" width={100} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
+              <YAxis dataKey="stage" type="category" width={100} tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+              <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+              <Bar dataKey="count" fill="url(#funnelGradient)" radius={[0, 4, 4, 0]} />
+              <defs>
+                <linearGradient id="funnelGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#8b5cf6" />
+                </linearGradient>
+              </defs>
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -213,13 +253,13 @@ export default function LeadsPage() {
 
       {view === 'scoring' ? (
         /* Scoring View */
-        <Card>
+        <Card className="card-hover">
           <CardHeader><CardTitle className="text-sm font-medium">Lead Scores (Highest First)</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-2">
               {customers.slice(0, 50).map((c) => (
-                <Link key={c.id} href={`/customers/${c.id}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 border">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                <Link key={c.id} href={`/customers/${c.id}`} className={`flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 border border-l-2 transition-colors ${TEMP_BORDER_COLORS[c.leadTemperature] || 'border-l-gray-300'}`}>
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-sm font-medium text-indigo-600 dark:text-indigo-400">
                     {getInitials(c.name)}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -231,7 +271,7 @@ export default function LeadsPage() {
                   <div className="w-24 flex items-center gap-2">
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${c.leadScore >= 70 ? 'bg-green-500' : c.leadScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                        className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : c.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
                         style={{ width: `${c.leadScore}%` }}
                       />
                     </div>
@@ -266,7 +306,7 @@ export default function LeadsPage() {
 
           <DragOverlay>
             {activeCustomer ? (
-              <div className="p-2 bg-card rounded border shadow-lg w-[180px]">
+              <div className="p-2.5 bg-card rounded-lg border shadow-xl w-[180px] scale-105 rotate-2">
                 <p className="font-medium text-sm truncate">{activeCustomer.name || 'Unknown'}</p>
                 <p className="text-xs text-muted-foreground">{formatPhone(activeCustomer.phone)}</p>
                 <div className="flex items-center gap-2 mt-1">

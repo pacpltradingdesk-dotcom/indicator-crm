@@ -4,16 +4,21 @@ export default function DashboardPageLoading() {
       {/* Stats skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-lg p-4 border">
-            <div className="h-4 bg-gray-200 rounded w-20 mb-2" />
-            <div className="h-8 bg-gray-200 rounded w-16" />
+          <div key={i} className="rounded-xl p-4 border border-border bg-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg shimmer-bg" />
+              <div className="space-y-2">
+                <div className="h-3 shimmer-bg rounded w-16" />
+                <div className="h-6 shimmer-bg rounded w-12" />
+              </div>
+            </div>
           </div>
         ))}
       </div>
       {/* Charts skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg border p-4 h-64" />
-        <div className="bg-white rounded-lg border p-4 h-64" />
+        <div className="bg-card rounded-xl border border-border p-4 h-64" />
+        <div className="bg-card rounded-xl border border-border p-4 h-64" />
       </div>
     </div>
   )

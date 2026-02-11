@@ -125,10 +125,10 @@ export default function ChatPage() {
   )
 
   return (
-    <div className="flex h-[calc(100vh-5rem)] -m-4 lg:-m-6 bg-card">
+    <div className="flex h-[calc(100vh-5rem)] -m-4 lg:-m-6 bg-card animate-fade-in">
       {/* Left: Conversation List */}
-      <div className="w-80 border-r border-border flex-col hidden md:flex">
-        <div className="p-3 border-b border-border">
+      <div className="w-80 border-r border-border/50 flex-col hidden md:flex">
+        <div className="p-3 border-b border-border/50">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -144,11 +144,11 @@ export default function ChatPage() {
             <div
               key={conv.id}
               onClick={() => setSelectedId(conv.id)}
-              className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-b border-border hover:bg-accent/50 ${
-                selectedId === conv.id ? 'bg-primary/5 border-l-2 border-l-primary' : ''
+              className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-b border-border/30 transition-colors hover:bg-accent/50 ${
+                selectedId === conv.id ? 'bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-l-2 border-l-indigo-500' : ''
               }`}
             >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-sm font-medium text-indigo-600 dark:text-indigo-400 shrink-0">
                 {getInitials(conv.name)}
               </div>
               <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ export default function ChatPage() {
                 <p className="text-xs text-muted-foreground truncate">{(conv as any).lastMessage || formatPhone(conv.phone)}</p>
               </div>
               <span className={`w-2 h-2 rounded-full shrink-0 ${
-                conv.leadTemperature === 'HOT' ? 'bg-red-500' :
+                conv.leadTemperature === 'HOT' ? 'bg-red-500 animate-pulse' :
                 conv.leadTemperature === 'WARM' ? 'bg-orange-500' : 'bg-blue-500'
               }`} />
             </div>
@@ -175,8 +175,8 @@ export default function ChatPage() {
         {selectedId ? (
           <>
             {/* Chat Header */}
-            <div className="px-4 py-3 border-b flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+            <div className="px-4 py-3 border-b border-border/50 flex items-center gap-3 bg-card">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-sm font-medium text-indigo-600 dark:text-indigo-400">
                 {getInitials(customerDetail?.name)}
               </div>
               <div>
@@ -194,25 +194,25 @@ export default function ChatPage() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.direction === 'OUTBOUND' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[65%] rounded-lg px-3 py-2 shadow-sm ${
+                  <div className={`max-w-[65%] rounded-2xl px-4 py-2.5 shadow-sm ${
                     msg.direction === 'OUTBOUND'
-                      ? 'bg-green-100 text-foreground'
-                      : 'bg-card text-foreground'
+                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
+                      : 'glass dark:bg-card'
                   }`}>
                     {msg.templateName && (
-                      <p className="text-xs text-muted-foreground mb-1">Template: {msg.templateName}</p>
+                      <p className={`text-xs mb-1 ${msg.direction === 'OUTBOUND' ? 'text-white/70' : 'text-muted-foreground'}`}>Template: {msg.templateName}</p>
                     )}
                     <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     <div className="flex items-center justify-end gap-1 mt-1">
-                      <span className="text-xs text-muted-foreground">
+                      <span className={`text-xs ${msg.direction === 'OUTBOUND' ? 'text-white/70' : 'text-muted-foreground'}`}>
                         {new Date(msg.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {msg.direction === 'OUTBOUND' && (
-                        <span className="text-muted-foreground">
-                          {msg.status === 'READ' ? <CheckCheck className="h-3 w-3 text-blue-500" /> :
+                        <span className="text-white/70">
+                          {msg.status === 'READ' ? <CheckCheck className="h-3 w-3 text-white" /> :
                            msg.status === 'DELIVERED' ? <CheckCheck className="h-3 w-3" /> :
                            msg.status === 'SENT' ? <Check className="h-3 w-3" /> :
                            <Clock className="h-3 w-3" />}
@@ -226,7 +226,7 @@ export default function ChatPage() {
             </div>
 
             {/* Input */}
-            <form onSubmit={sendMessage} className="p-3 border-t border-border bg-card flex gap-2">
+            <form onSubmit={sendMessage} className="p-3 border-t border-border/50 bg-card flex gap-2">
               <Input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -234,7 +234,7 @@ export default function ChatPage() {
                 className="flex-1"
                 disabled={sending}
               />
-              <Button type="submit" disabled={!newMessage.trim() || sending}>
+              <Button type="submit" disabled={!newMessage.trim() || sending} className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
                 <Send className="h-4 w-4" />
               </Button>
             </form>
@@ -242,7 +242,7 @@ export default function ChatPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
-              <MessageSquare className="h-12 w-12 mx-auto mb-3" />
+              <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p>Select a conversation to start chatting</p>
             </div>
           </div>
@@ -251,9 +251,9 @@ export default function ChatPage() {
 
       {/* Right: Contact Info */}
       {selectedId && customerDetail && (
-        <div className="w-72 border-l border-border bg-card p-4 overflow-y-auto hidden lg:block">
+        <div className="w-72 border-l border-border/50 bg-card p-4 overflow-y-auto hidden lg:block">
           <div className="text-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-xl font-medium text-primary mx-auto mb-2">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-medium text-white mx-auto mb-2 ring-4 ring-indigo-500/10">
               {getInitials(customerDetail.name)}
             </div>
             <p className="font-medium">{customerDetail.name || 'Unknown'}</p>
@@ -272,7 +272,7 @@ export default function ChatPage() {
               <span>{formatPhone(customerDetail.phone)}</span>
             </div>
 
-            <div className="border-t pt-3 space-y-2">
+            <div className="border-t border-border/50 pt-3 space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Score</span>
                 <span className="font-medium">{customerDetail.leadScore}/100</span>
@@ -292,7 +292,7 @@ export default function ChatPage() {
             </div>
 
             {customerDetail.tags?.length > 0 && (
-              <div className="border-t pt-3">
+              <div className="border-t border-border/50 pt-3">
                 <p className="text-muted-foreground mb-2">Tags</p>
                 <div className="flex flex-wrap gap-1">
                   {customerDetail.tags.map((ct: any) => (
@@ -303,7 +303,7 @@ export default function ChatPage() {
             )}
 
             {customerDetail.aiSummary && (
-              <div className="border-t pt-3">
+              <div className="border-t border-border/50 pt-3">
                 <p className="text-muted-foreground mb-1">AI Summary</p>
                 <p className="text-xs text-foreground">{customerDetail.aiSummary}</p>
               </div>

@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Zap, Play, Pause, Settings, Trash2, ArrowRight } from 'lucide-react'
+import { Plus, Zap, Play, Pause, Settings, Trash2, ArrowRight, TrendingUp } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const TRIGGERS = [
@@ -66,13 +66,24 @@ export default function AutomationsPage() {
     fetchAutomations()
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse-soft shadow-glow">
+          <TrendingUp className="h-5 w-5 text-white" />
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Automations</h1>
-        <Button size="sm" onClick={() => setShowCreate(true)}>
+        <div>
+          <h1 className="text-2xl font-bold">Automations</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Build automated workflows for your leads</p>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
           <Plus className="h-4 w-4 mr-1" /> New Automation
         </Button>
       </div>
@@ -80,11 +91,11 @@ export default function AutomationsPage() {
       {/* Automation Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {automations.map((auto) => (
-          <Card key={auto.id} className={`${!auto.isActive ? 'opacity-60' : ''}`}>
+          <Card key={auto.id} className={`card-hover ${!auto.isActive ? 'opacity-60' : ''}`}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <Zap className={`h-4 w-4 ${auto.isActive ? 'text-yellow-500' : 'text-gray-400'}`} />
+                  <Zap className={`h-4 w-4 ${auto.isActive ? 'text-yellow-500' : 'text-muted-foreground'}`} />
                   <CardTitle className="text-sm">{auto.name}</CardTitle>
                 </div>
                 <Switch checked={auto.isActive} onCheckedChange={() => toggleActive(auto.id, auto.isActive)} />
@@ -92,29 +103,29 @@ export default function AutomationsPage() {
             </CardHeader>
             <CardContent>
               {auto.description && (
-                <p className="text-xs text-gray-500 mb-3">{auto.description}</p>
+                <p className="text-xs text-muted-foreground mb-3">{auto.description}</p>
               )}
               <div className="flex items-center gap-2 mb-3">
                 <Badge variant="outline">{auto.trigger}</Badge>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-                <span className="text-xs text-gray-500">{auto.steps?.length || 0} steps</span>
+                <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">{auto.steps?.length || 0} steps</span>
               </div>
 
               {/* Step preview */}
               <div className="space-y-1 mb-3">
                 {auto.steps?.slice(0, 3).map((step: any, i: number) => (
                   <div key={step.id} className="flex items-center gap-2 text-xs">
-                    <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px]">{i + 1}</span>
-                    <span className="text-gray-600">{STEP_TYPES.find((s) => s.value === step.type)?.label || step.type}</span>
+                    <span className="w-4 h-4 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-[10px]">{i + 1}</span>
+                    <span className="text-muted-foreground">{STEP_TYPES.find((s) => s.value === step.type)?.label || step.type}</span>
                   </div>
                 ))}
                 {(auto.steps?.length || 0) > 3 && (
-                  <p className="text-xs text-gray-400 pl-6">+{auto.steps.length - 3} more steps</p>
+                  <p className="text-xs text-muted-foreground pl-6">+{auto.steps.length - 3} more steps</p>
                 )}
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-xs text-gray-400">{auto._count?.runs || 0} runs</span>
+              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                <span className="text-xs text-muted-foreground">{auto._count?.runs || 0} runs</span>
                 <div className="flex gap-1">
                   <Link href={`/automations/${auto.id}`}>
                     <Button variant="ghost" size="sm"><Settings className="h-3 w-3" /></Button>
@@ -131,8 +142,8 @@ export default function AutomationsPage() {
         {automations.length === 0 && (
           <Card className="col-span-full">
             <CardContent className="py-12 text-center">
-              <Zap className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-500">No automations yet</p>
+              <Zap className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">No automations yet</p>
               <Button className="mt-3" onClick={() => setShowCreate(true)}>Create Your First Automation</Button>
             </CardContent>
           </Card>
@@ -228,9 +239,9 @@ function CreateAutomationDialog({ open, onClose, onCreated }: { open: boolean; o
             </div>
             <div className="space-y-3">
               {steps.map((step, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-border/50 rounded-lg p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-500">Step {i + 1}</span>
+                    <span className="text-xs font-medium text-muted-foreground">Step {i + 1}</span>
                     <Button type="button" variant="ghost" size="sm" onClick={() => removeStep(i)}>
                       <Trash2 className="h-3 w-3 text-red-500" />
                     </Button>

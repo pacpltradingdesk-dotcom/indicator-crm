@@ -113,14 +113,17 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Customers</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Customers</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage your leads and customer relationships</p>
+        </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={exportCSV}>
             <Download className="h-4 w-4 mr-1" /> Export
           </Button>
-          <Button size="sm" onClick={() => setShowAddDialog(true)}>
+          <Button size="sm" onClick={() => setShowAddDialog(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
             <Plus className="h-4 w-4 mr-1" /> Add Customer
           </Button>
         </div>
@@ -128,7 +131,7 @@ export default function CustomersPage() {
 
       {/* Bulk Actions Bar */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+        <div className="flex items-center gap-3 p-3 glass rounded-xl sticky bottom-4 z-10 shadow-lg">
           <span className="text-sm font-medium">{selectedIds.size} selected</span>
           <Select value={bulkAction} onValueChange={(v) => { setBulkAction(v); setBulkValue('') }}>
             <SelectTrigger className="w-[180px] h-8">
@@ -224,7 +227,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Table */}
-      <Card>
+      <Card className="rounded-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -255,7 +258,7 @@ export default function CustomersPage() {
                 <TableRow><TableCell colSpan={10} className="text-center py-8 text-muted-foreground">No customers found</TableCell></TableRow>
               ) : (
                 customers.map((c) => (
-                  <TableRow key={c.id} className={`cursor-pointer hover:bg-accent/50 ${selectedIds.has(c.id) ? 'bg-primary/5' : ''}`}>
+                  <TableRow key={c.id} className={`cursor-pointer hover:bg-accent/50 transition-colors ${selectedIds.has(c.id) ? 'bg-primary/5' : ''}`}>
                     <TableCell>
                       <input
                         type="checkbox"
@@ -266,7 +269,7 @@ export default function CustomersPage() {
                     </TableCell>
                     <TableCell>
                       <Link href={`/customers/${c.id}`} className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-xs font-medium text-indigo-600 dark:text-indigo-400">
                           {getInitials(c.name)}
                         </div>
                         <div>
@@ -282,7 +285,10 @@ export default function CustomersPage() {
                     <TableCell className="hidden lg:table-cell">
                       <div className="flex items-center gap-1">
                         <div className="w-8 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-primary rounded-full" style={{ width: `${c.leadScore}%` }} />
+                          <div
+                            className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : c.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+                            style={{ width: `${c.leadScore}%` }}
+                          />
                         </div>
                         <span className="text-xs">{c.leadScore}</span>
                       </div>
