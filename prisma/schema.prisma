@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Models ──────────────────────────────────────────────
+// Note: SQLite doesn't support enums, so we use String fields with convention
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  password      String
+  name          String
+  role          String     @default("AGENT")
+  avatar        String?
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  activities    Activity[]
+  scheduledFollowUps ScheduledFollowUp[]
+}
+
+model Customer {
+  id                 String    @id @default(cuid())
+  phone              String    @unique
+  name               String?
+  email              String?
+  source             String    @default("MANUAL")
+  leadStage          String    @default("NEW")
+  leadTemperature    String    @default("COLD")
+  leadScore          Int       @default(0)
+
+  aiSummary          String?
+  tradingExperience  String?
+  interestedProducts String    @default("[]")
+  preferredMarkets   String    @default("[]")
+
+  totalMessages      Int       @default(0)
+  totalSpent         Float     @default(0)
+  lastMessageAt      DateTime?
+  lastPaymentAt      DateTime?
+
+  whatsappId         String?   @unique
+  profilePicUrl      String?
+
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tags               CustomerTag[]
+  messages           Message[]
+  payments           Payment[]
+  workflowRuns       WorkflowRun[]
+  scheduledFollowUps ScheduledFollowUp[]
+  activities         Activity[]
+
+  @@index([leadStage])
+  @@index([leadTemperature])
+  @@index([source])
+  @@index([leadScore])
+  @@index([createdAt])
+  @@index([lastMessageAt])
+}
+
+model Tag {
+  id            String        @id @default(cuid())
+  name          String        @unique
+  color         String        @default("#6366f1")
+  isAiGenerated Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+
+  customers     CustomerTag[]
+}
+
+model CustomerTag {
+  id           String   @id @default(cuid())
+  customerId   String
+  tagId        String
+  aiConfidence Float?
+  createdAt    DateTime @default(now())
+
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tag          Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, tagId])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  customerId     String
+  direction      String
+  type           String   @default("TEXT")
+  content        String
+  mediaUrl       String?
+  whatsappMsgId  String?  @unique
+  status         String   @default("PENDING")
+  templateName   String?
+  metadata       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([customerId, createdAt])
+}
+
+model Payment {
+  id                String    @id @default(cuid())
+  customerId        String
+  productId         String?
+  razorpayPaymentId String?   @unique
+  razorpayOrderId   String?
+  amount            Float
+  currency          String    @default("INR")
+  status            String    @default("CREATED")
+  method            String?
+  email             String?
+  phone             String?
+  description       String?
+  metadata          String?
+  paidAt            DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product           Product?  @relation(fields: [productId], references: [id])
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  currency    String    @default("INR")
+  isActive    Boolean   @default(true)
+  category    String?
+  features    String    @default("[]")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  payments    Payment[]
+}
+
+model Automation {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  trigger       String
+  triggerConfig String?
+  isActive      Boolean  @default(true)
+  isTemplate    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  steps         AutomationStep[]
+  runs          WorkflowRun[]
+}
+
+model AutomationStep {
+  id             String   @id @default(cuid())
+  automationId   String
+  type           String
+  config         String   @default("{}")
+  order          Int
+  nextStepId     String?
+  conditionTrue  String?
+  conditionFalse String?
+  createdAt      DateTime @default(now())
+
+  automation     Automation     @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  logs           WorkflowRunLog[]
+}
+
+model WorkflowRun {
+  id            String    @id @default(cuid())
+  automationId  String
+  customerId    String
+  status        String    @default("RUNNING")
+  currentStepId String?
+  context       String?
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+  error         String?
+
+  automation    Automation    @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  logs          WorkflowRunLog[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model WorkflowRunLog {
+  id            String   @id @default(cuid())
+  workflowRunId String
+  stepId        String
+  action        String
+  input         String?
+  output        String?
+  success       Boolean  @default(true)
+  error         String?
+  executedAt    DateTime @default(now())
+
+  workflowRun   WorkflowRun    @relation(fields: [workflowRunId], references: [id], onDelete: Cascade)
+  step          AutomationStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+}
+
+model ScheduledFollowUp {
+  id          String    @id @default(cuid())
+  customerId  String
+  assignedTo  String?
+  type        String    @default("WHATSAPP_MESSAGE")
+  status      String    @default("SCHEDULED")
+  content     String?
+  scheduledAt DateTime
+  executedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [assignedTo], references: [id])
+}
+
+model MessageTemplate {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  language      String   @default("en")
+  category      String   @default("MARKETING")
+  content       String
+  headerType    String?
+  headerContent String?
+  footerContent String?
+  buttons       String?
+  variables     String   @default("[]")
+  isApproved    Boolean  @default(false)
+  whatsappId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Activity {
+  id          String    @id @default(cuid())
+  type        String
+  description String
+  customerId  String?
+  userId      String?
+  metadata    String?
+  createdAt   DateTime  @default(now())
+
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id])
+
+  @@index([customerId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
