@@ -1,6 +1,6 @@
 export default function CustomersLoading() {
   return (
-    <div className="space-y-4 animate-pulse">
+    <div className="space-y-4 animate-pulse-soft">
       <div className="flex justify-between items-center">
         <div className="h-8 shimmer-bg rounded w-40" />
         <div className="h-10 shimmer-bg rounded w-32" />

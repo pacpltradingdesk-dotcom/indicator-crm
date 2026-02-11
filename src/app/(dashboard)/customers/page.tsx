@@ -123,7 +123,7 @@ export default function CustomersPage() {
           <Button variant="outline" size="sm" onClick={exportCSV}>
             <Download className="h-4 w-4 mr-1" /> Export
           </Button>
-          <Button size="sm" onClick={() => setShowAddDialog(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
+          <Button size="sm" onClick={() => setShowAddDialog(true)} className="btn-brand">
             <Plus className="h-4 w-4 mr-1" /> Add Customer
           </Button>
         </div>
@@ -237,7 +237,8 @@ export default function CustomersPage() {
                     type="checkbox"
                     checked={customers.length > 0 && selectedIds.size === customers.length}
                     onChange={toggleSelectAll}
-                    className="rounded border-border"
+                    aria-label="Select all customers"
+                    className="rounded border-border accent-primary"
                   />
                 </TableHead>
                 <TableHead>Customer</TableHead>
@@ -264,7 +265,8 @@ export default function CustomersPage() {
                         type="checkbox"
                         checked={selectedIds.has(c.id)}
                         onChange={() => toggleSelect(c.id)}
-                        className="rounded border-border"
+                        aria-label={`Select ${c.name || 'customer'}`}
+                        className="rounded border-border accent-primary"
                       />
                     </TableCell>
                     <TableCell>
@@ -286,7 +288,7 @@ export default function CustomersPage() {
                       <div className="flex items-center gap-1">
                         <div className="w-8 h-1.5 bg-muted rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : c.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+                            className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'score-high' : c.leadScore >= 40 ? 'score-medium' : 'score-low'}`}
                             style={{ width: `${c.leadScore}%` }}
                           />
                         </div>

@@ -83,7 +83,7 @@ export default function AutomationsPage() {
           <h1 className="text-2xl font-bold">Automations</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Build automated workflows for your leads</p>
         </div>
-        <Button size="sm" onClick={() => setShowCreate(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
+        <Button size="sm" onClick={() => setShowCreate(true)} className="btn-brand">
           <Plus className="h-4 w-4 mr-1" /> New Automation
         </Button>
       </div>
@@ -131,7 +131,7 @@ export default function AutomationsPage() {
                     <Button variant="ghost" size="sm"><Settings className="h-3 w-3" /></Button>
                   </Link>
                   <Button variant="ghost" size="sm" onClick={() => deleteAutomation(auto.id)}>
-                    <Trash2 className="h-3 w-3 text-red-500" />
+                    <Trash2 className="h-3 w-3 text-destructive" />
                   </Button>
                 </div>
               </div>
@@ -210,7 +210,7 @@ function CreateAutomationDialog({ open, onClose, onCreated }: { open: boolean; o
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Create Automation</DialogTitle></DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="text-sm font-medium">Name *</label>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. New Lead Welcome Flow" required />
@@ -243,7 +243,7 @@ function CreateAutomationDialog({ open, onClose, onCreated }: { open: boolean; o
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-muted-foreground">Step {i + 1}</span>
                     <Button type="button" variant="ghost" size="sm" onClick={() => removeStep(i)}>
-                      <Trash2 className="h-3 w-3 text-red-500" />
+                      <Trash2 className="h-3 w-3 text-destructive" />
                     </Button>
                   </div>
                   <Select value={step.type} onValueChange={(v) => updateStep(i, 'type', v)}>

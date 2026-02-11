@@ -50,7 +50,7 @@ function DraggableLeadCard({ customer }: { customer: any }) {
       className={`p-2.5 bg-card rounded-lg border shadow-sm card-hover border-l-2 ${TEMP_BORDER_COLORS[customer.leadTemperature] || 'border-l-gray-300'} ${isDragging ? 'opacity-50' : ''}`}
     >
       <div className="flex items-start gap-1">
-        <button {...listeners} {...attributes} className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+        <button {...listeners} {...attributes} aria-label={`Drag ${customer.name || 'lead'} to change stage`} className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
           <GripVertical className="h-3.5 w-3.5" />
         </button>
         <Link href={`/customers/${customer.id}`} className="flex-1 min-w-0">
@@ -61,7 +61,7 @@ function DraggableLeadCard({ customer }: { customer: any }) {
             <div className="flex items-center gap-1 flex-1">
               <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${customer.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : customer.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+                  className={`h-full rounded-full ${customer.leadScore >= 70 ? 'score-high' : customer.leadScore >= 40 ? 'score-medium' : 'score-low'}`}
                   style={{ width: `${customer.leadScore}%` }}
                 />
               </div>
@@ -216,7 +216,7 @@ export default function LeadsPage() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700 rounded-xl p-4 text-white card-hover shadow-md">
+        <div className="stat-gradient-gray rounded-xl p-4 text-white card-hover shadow-md">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
               <Skull className="h-5 w-5" />
@@ -271,7 +271,7 @@ export default function LeadsPage() {
                   <div className="w-24 flex items-center gap-2">
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'bg-gradient-to-r from-green-400 to-emerald-500' : c.leadScore >= 40 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+                        className={`h-full rounded-full transition-all ${c.leadScore >= 70 ? 'score-high' : c.leadScore >= 40 ? 'score-medium' : 'score-low'}`}
                         style={{ width: `${c.leadScore}%` }}
                       />
                     </div>

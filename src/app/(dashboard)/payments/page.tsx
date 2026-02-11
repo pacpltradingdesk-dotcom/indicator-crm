@@ -127,7 +127,7 @@ export default function PaymentsPage() {
                   <TableRow key={p.id} className="hover:bg-accent/50 transition-colors">
                     <TableCell className="font-mono text-xs">{p.razorpayPaymentId || p.id.slice(0, 12)}</TableCell>
                     <TableCell>
-                      <Link href={`/customers/${p.customerId}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                      <Link href={`/customers/${p.customerId}`} className="text-primary hover:underline">
                         {p.customer?.name || p.phone || 'Unknown'}
                       </Link>
                     </TableCell>

@@ -115,7 +115,7 @@
   .shimmer-bg {
     background: linear-gradient(90deg,
       hsl(var(--muted)) 0%,
-      hsl(var(--muted) / 0.5) 50%,
+      hsl(var(--accent)) 50%,
       hsl(var(--muted)) 100%
     );
     background-size: 200% 100%;
@@ -143,6 +143,25 @@
   }
   .stat-gradient-teal {
     @apply bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700;
+  }
+  .stat-gradient-gray {
+    @apply bg-gradient-to-br from-slate-400 to-slate-500 dark:from-slate-600 dark:to-slate-700;
+  }
+
+  /* Brand gradient button */
+  .btn-brand {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0 shadow-md shadow-indigo-500/20;
+  }
+
+  /* Score progress bar gradients */
+  .score-high {
+    @apply bg-gradient-to-r from-green-400 to-emerald-500;
+  }
+  .score-medium {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-500;
+  }
+  .score-low {
+    @apply bg-gradient-to-r from-red-400 to-rose-500;
   }
 }
 

@@ -13,15 +13,15 @@ export default function DashboardError({
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="text-center max-w-md mx-auto">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-8 h-8 text-red-600" />
+        <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-8 h-8 text-destructive" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
-        <p className="text-gray-500 mb-2">
+        <h2 className="text-xl font-semibold text-foreground mb-2">Something went wrong</h2>
+        <p className="text-muted-foreground mb-2">
           {error.message || 'An unexpected error occurred while loading this page.'}
         </p>
         {error.digest && (
-          <p className="text-xs text-gray-400 mb-4">Error ID: {error.digest}</p>
+          <p className="text-xs text-muted-foreground/70 mb-4">Error ID: {error.digest}</p>
         )}
         <div className="flex gap-3 justify-center">
           <Button onClick={reset}>Try Again</Button>

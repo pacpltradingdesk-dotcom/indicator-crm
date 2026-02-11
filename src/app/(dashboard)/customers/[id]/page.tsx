@@ -224,7 +224,7 @@ export default function CustomerDetailPage() {
                 <label className="text-sm font-medium">Tags</label>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {customer.tags?.map((ct: any) => (
-                    <Badge key={ct.id} variant="secondary" style={{ backgroundColor: ct.tag.color + '20', color: ct.tag.color }}>
+                    <Badge key={ct.id} variant="secondary" style={{ backgroundColor: ct.tag.color + '25', color: ct.tag.color, borderColor: ct.tag.color + '40' }}>
                       {ct.tag.name} {ct.aiConfidence && <span className="ml-1 opacity-50">{Math.round(ct.aiConfidence * 100)}%</span>}
                     </Badge>
                   ))}
@@ -241,7 +241,7 @@ export default function CustomerDetailPage() {
               <div className="space-y-4">
                 {customer.activities?.map((a: any) => (
                   <div key={a.id} className="flex gap-3 text-sm">
-                    <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
                     <div>
                       <p>{a.description}</p>
                       <p className="text-xs text-muted-foreground">{formatDateTime(a.createdAt)}</p>

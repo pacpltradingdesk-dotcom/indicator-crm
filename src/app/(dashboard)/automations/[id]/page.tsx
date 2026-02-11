@@ -115,13 +115,13 @@ export default function AutomationDetailPage() {
             {automation.runs?.map((run: any) => (
               <div key={run.id} className="flex items-center gap-3 p-3 border border-border/50 rounded-lg hover:bg-accent/30 transition-colors">
                 {run.status === 'COMPLETED' ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
                 ) : run.status === 'FAILED' ? (
-                  <XCircle className="h-5 w-5 text-red-500" />
+                  <XCircle className="h-5 w-5 text-destructive" />
                 ) : run.status === 'RUNNING' ? (
-                  <Play className="h-5 w-5 text-blue-500" />
+                  <Play className="h-5 w-5 text-primary" />
                 ) : (
-                  <Clock className="h-5 w-5 text-yellow-500" />
+                  <Clock className="h-5 w-5 text-amber-500 dark:text-amber-400" />
                 )}
                 <div className="flex-1">
                   <p className="text-sm font-medium">{run.customer?.name || run.customer?.phone || 'Unknown'}</p>
@@ -131,7 +131,7 @@ export default function AutomationDetailPage() {
                   run.status === 'COMPLETED' ? 'default' :
                   run.status === 'FAILED' ? 'destructive' : 'secondary'
                 }>{run.status}</Badge>
-                {run.error && <p className="text-xs text-red-500">{run.error}</p>}
+                {run.error && <p className="text-xs text-destructive">{run.error}</p>}
               </div>
             ))}
             {(!automation.runs || automation.runs.length === 0) && (

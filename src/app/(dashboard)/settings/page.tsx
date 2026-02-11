@@ -117,7 +117,7 @@ export default function SettingsPage() {
                   <CardTitle>Products</CardTitle>
                   <CardDescription>Pine Script indicators catalog</CardDescription>
                 </div>
-                <Button size="sm" onClick={() => setShowAddProduct(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
+                <Button size="sm" onClick={() => setShowAddProduct(true)} className="btn-brand">
                   <Plus className="h-4 w-4 mr-1" /> Add Product
                 </Button>
               </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                   <CardTitle>WhatsApp Templates</CardTitle>
                   <CardDescription>Approved message templates for 24h+ conversations</CardDescription>
                 </div>
-                <Button size="sm" onClick={() => setShowAddTemplate(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0">
+                <Button size="sm" onClick={() => setShowAddTemplate(true)} className="btn-brand">
                   <Plus className="h-4 w-4 mr-1" /> Add Template
                 </Button>
               </div>
@@ -192,7 +192,7 @@ export default function SettingsPage() {
               <CardDescription>Add this code snippet to your website to capture leads</CardDescription>
             </CardHeader>
             <CardContent>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto">{`<!-- Indicator CRM Lead Capture -->
+              <pre className="bg-foreground/95 text-emerald-400 dark:bg-card dark:border dark:border-border p-4 rounded-lg text-xs overflow-x-auto">{`<!-- Indicator CRM Lead Capture -->
 <script>
 function submitLeadForm(e) {
   e.preventDefault();

@@ -144,7 +144,11 @@ export default function ChatPage() {
             <div
               key={conv.id}
               onClick={() => setSelectedId(conv.id)}
-              className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-b border-border/30 transition-colors hover:bg-accent/50 ${
+              role="button"
+              tabIndex={0}
+              aria-label={`Chat with ${conv.name || formatPhone(conv.phone)}`}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedId(conv.id) }}
+              className={`flex items-center gap-3 px-3 py-3 cursor-pointer border-b border-border/30 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${
                 selectedId === conv.id ? 'bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-l-2 border-l-indigo-500' : ''
               }`}
             >
@@ -158,7 +162,10 @@ export default function ChatPage() {
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{(conv as any).lastMessage || formatPhone(conv.phone)}</p>
               </div>
-              <span className={`w-2 h-2 rounded-full shrink-0 ${
+              <span
+                role="status"
+                aria-label={`Lead temperature: ${conv.leadTemperature}`}
+                className={`w-2 h-2 rounded-full shrink-0 ${
                 conv.leadTemperature === 'HOT' ? 'bg-red-500 animate-pulse' :
                 conv.leadTemperature === 'WARM' ? 'bg-orange-500' : 'bg-blue-500'
               }`} />
@@ -200,7 +207,7 @@ export default function ChatPage() {
                   <div className={`max-w-[65%] rounded-2xl px-4 py-2.5 shadow-sm ${
                     msg.direction === 'OUTBOUND'
                       ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
-                      : 'glass dark:bg-card'
+                      : 'glass'
                   }`}>
                     {msg.templateName && (
                       <p className={`text-xs mb-1 ${msg.direction === 'OUTBOUND' ? 'text-white/70' : 'text-muted-foreground'}`}>Template: {msg.templateName}</p>

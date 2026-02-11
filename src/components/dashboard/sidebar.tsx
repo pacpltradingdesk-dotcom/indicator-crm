@@ -106,6 +106,7 @@ export function Sidebar() {
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
+            aria-label="Sign out"
             className="text-muted-foreground hover:text-destructive transition-colors"
           >
             <LogOut className="h-4 w-4" />
@@ -118,12 +119,15 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile hamburger button */}
-      <button
-        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border shadow-sm"
-        onClick={() => setMobileOpen(true)}
-      >
-        <Menu className="h-5 w-5" />
-      </button>
+      {!mobileOpen && (
+        <button
+          aria-label="Open navigation menu"
+          className="lg:hidden fixed top-3 left-3 z-40 p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border shadow-sm"
+          onClick={() => setMobileOpen(true)}
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      )}
 
       {/* Mobile overlay */}
       {mobileOpen && (
