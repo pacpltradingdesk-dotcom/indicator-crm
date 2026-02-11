@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
@@ -14,7 +15,6 @@ import {
   Zap,
   Settings,
   LogOut,
-  TrendingUp,
   Moon,
   Sun,
   Menu,
@@ -44,9 +44,7 @@ export function Sidebar() {
       <div className="p-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-glow-sm">
-              <TrendingUp className="h-4.5 w-4.5 text-white" />
-            </div>
+            <Image src="/logo.png" alt="PACPL Logo" width={36} height={36} className="rounded-lg" />
             <span className="font-bold text-lg gradient-text">Indicator CRM</span>
           </div>
           <button
